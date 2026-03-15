@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextType, TextNode
-from markdown import split_nodes_delimiter
+from markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 
 class TestMarkdown(unittest.TestCase):
@@ -65,6 +65,54 @@ class TestMarkdown(unittest.TestCase):
         node = TextNode("_hello, world", TextType.PLAIN)
         with self.assertRaises(Exception):
             actual = split_nodes_delimiter([node], "_", TextType.ITALIC),
+
+    def test_extract_markdown_images(self):
+        markdown = "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        expected = [("image", "https://i.imgur.com/zjjcJKZ.png")]
+        actual = extract_markdown_images(markdown)
+        self.assertListEqual(expected, actual)
+
+    def test_extract_multiple_images_in_same_paragraph(self):
+        markdown = "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png). This is text with ![another image](https://i.imgur.com/stuff.png)"
+        expected = [
+            ("image", "https://i.imgur.com/zjjcJKZ.png"),
+            ("another image", "https://i.imgur.com/stuff.png"),
+        ]
+        actual = extract_markdown_images(markdown)
+        self.assertListEqual(expected, actual)
+
+    def test_extract_markdown_links(self):
+        markdown = "This is text with a [link](https://google.com)"
+        expected = [("link", "https://google.com")]
+        actual = extract_markdown_links(markdown)
+        self.assertListEqual(expected, actual)
+
+    def test_extract_multiple_links_in_same_paragraph(self):
+        markdown = "This is text with a [link](https://google.com). This is text with [another link](https://boot.dev)"
+        expected = [
+            ("link", "https://google.com"),
+            ("another link", "https://boot.dev"),
+        ]
+        actual = extract_markdown_links(markdown)
+        self.assertListEqual(expected, actual)
+
+    def test_extract_image_from_markdown_with_both_link_and_image(self):
+        markdown = "This is text with a [link](https://google.com). This is text with an ![image](https://boot.dev/logo.png)"
+        expected = [
+            ("image", "https://boot.dev/logo.png"),
+        ]
+        actual = extract_markdown_images(markdown)
+        self.assertListEqual(expected, actual)
+
+
+    def test_extract_link_from_markdown_with_both_link_and_image(self):
+        markdown = "This is text with a [link](https://google.com). This is text with an ![image](https://boot.dev/logo.png)"
+        expected = [
+            ("link", "https://google.com"),
+        ]
+        actual = extract_markdown_links(markdown)
+        self.assertListEqual(expected, actual)
+
 
 if __name__ == "__main__":
     unittest.main()
