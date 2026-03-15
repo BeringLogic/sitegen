@@ -37,3 +37,34 @@ def extract_markdown_links(markdown):
     matches = re.findall(r"(?<!!)\[(.+?)\]\((.+?)\)", markdown)
     return matches
 
+def split_nodes(old_nodes, regex, extract_markdown_func, text_type):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.PLAIN:
+            new_nodes.append(node)
+            continue
+
+        match_text = ""
+        matches = re.findall(regex, node.text)
+        for match in matches:
+            if match[0] != "":
+                new_nodes.append(TextNode(match[0], TextType.PLAIN))
+
+            items = extract_markdown_func(match[1])
+            (alt, url) = items[0]
+            new_nodes.append(TextNode(alt, text_type, url))
+
+            match_text += match[0] + match[1]
+
+        trailing_text = node.text.replace(match_text, "")
+        if len(trailing_text) > 0:
+            new_nodes.append(TextNode(trailing_text, TextType.PLAIN))
+
+    return new_nodes
+
+def split_nodes_image(old_nodes):
+    return split_nodes(old_nodes, r"(.*?)(!\[.+?\]\(.+?\))", extract_markdown_images, TextType.IMAGE)
+
+def split_nodes_link(old_nodes):
+    return split_nodes(old_nodes, r"(.*?)(?<!!)(\[.+?\]\(.+?\))", extract_markdown_links, TextType.LINK)
+
