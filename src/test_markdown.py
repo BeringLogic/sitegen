@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextType, TextNode
-from markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
+from markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
 
 
 class TestMarkdown(unittest.TestCase):
@@ -41,11 +41,11 @@ class TestMarkdown(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_code(self):
-        node = TextNode("```print('hello, world')```", TextType.PLAIN)
+        node = TextNode("`print('hello, world')`", TextType.PLAIN)
         expected = [
             TextNode("print('hello, world')", TextType.CODE),
         ]
-        actual = split_nodes_delimiter([node], "```", TextType.CODE)
+        actual = split_nodes_delimiter([node], "`", TextType.CODE)
         self.assertEqual(expected, actual)
 
     def test_2_different_delimiters(self):
@@ -195,6 +195,32 @@ class TestMarkdown(unittest.TestCase):
             TextNode(" and some trailing text", TextType.PLAIN),
         ]
         actual = split_nodes_link([node])
+        self.assertListEqual(expected, actual)
+
+    def test_text(self):
+        markdown = "just some text"
+        expected = [
+            TextNode("just some text", TextType.PLAIN)
+        ]
+        actual = text_to_textnodes(markdown)
+        self.assertListEqual(expected, actual)
+
+    def test_a_bit_of_everything(self):
+        markdown = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev) and finally just some text at the end"
+        expected = [
+            TextNode("This is ", TextType.PLAIN),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.PLAIN),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.PLAIN),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and an ", TextType.PLAIN),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.PLAIN),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+            TextNode(" and finally just some text at the end", TextType.PLAIN)
+        ]
+        actual = text_to_textnodes(markdown)
         self.assertListEqual(expected, actual)
 
 if __name__ == "__main__":
