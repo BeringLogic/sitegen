@@ -1,10 +1,10 @@
 import unittest
 
 from textnode import TextType, TextNode
-from markdown import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
+from markdown_inline import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnodes
 
 
-class TestMarkdown(unittest.TestCase):
+class TestMarkdownInline(unittest.TestCase):
 
     def test_italic_part_in_middle(self):
         node = TextNode("some plain text _with italic in the middle_ some more plain text", TextType.PLAIN)
