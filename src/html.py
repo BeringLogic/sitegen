@@ -72,3 +72,9 @@ def block_to_html_node(markdown, block_type):
                 nodes.append(text_node_to_html_node(text_node))
             return HTMLNode("p", None, nodes)
 
+def extract_title(markdown):
+    matches = re.findall(r"^# (.+)", markdown)
+    if len(matches) != 1:
+        raise Exception("page has no header")
+    return matches[0]
+

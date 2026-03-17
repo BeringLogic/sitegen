@@ -1,6 +1,6 @@
 import unittest
 
-from html import markdown_to_html_node
+from html import markdown_to_html_node, extract_title
 
 class TestHTML(unittest.TestCase):
 
@@ -99,4 +99,15 @@ lines</blockquote></div>"""
         node = markdown_to_html_node(markdown)
         actual = node.to_html()
         self.assertEqual(expected, actual)
+
+    def test_extract_title(self):
+        markdown = "# This is a header 1"
+        expected = "This is a header 1"
+        actual = extract_title(markdown)
+        self.assertEqual(expected, actual)
+
+    def test_extract_title_no_title(self):
+        markdown = "This is not a header"
+        with self.assertRaises(Exception):
+            extract_title(markdown)
 
