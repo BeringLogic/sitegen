@@ -14,8 +14,9 @@ class HTMLNode:
         if self.value:
             html += self.value
         else:
-            for child in self.children:
-                html += child.to_html()
+            if self.children is not None:
+                for child in self.children:
+                    html += child.to_html()
         if self.tag:
             html += f"</{self.tag}>"
         return html
