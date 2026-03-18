@@ -53,7 +53,7 @@ def recurse_generate(source, destination):
     with os.scandir(source) as entries:
         for entry in entries:
             if entry.is_dir():
-                os.mkdir(os.path.join(source, entry.name))
+                os.mkdir(os.path.join(destination, entry.name))
                 recurse_generate(os.path.join(source, entry.name), os.path.join(destination, entry.name))
             else:
                 markdown_file = os.path.join(source, entry.name)
