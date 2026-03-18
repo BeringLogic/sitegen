@@ -31,7 +31,7 @@ def block_to_html_node(markdown, block_type):
             return HTMLNode("h"+str(level), None, header_nodes)
 
         case BlockType.CODE:
-            code = markdown.replace("```", "")
+            code = markdown.replace("```\n", "").replace("```", "")
             node = HTMLNode("code", code)
             return HTMLNode("pre", None, [node])
 

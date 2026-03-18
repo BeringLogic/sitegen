@@ -22,6 +22,7 @@ class TextNode:
         return f'TextNode({self.text}, {self.text_type.value}, {self.url})'
 
 def text_node_to_html_node(text_node):
+    text_node.text = text_node.text.replace("\n", "<br />")
     match(text_node.text_type):
         case TextType.PLAIN:
             return HTMLNode(None, text_node.text)
