@@ -78,7 +78,7 @@ def extract_title(markdown):
         raise Exception("page has no header")
     return matches[0]
 
-def generate_page(markdown_file, template_file, html_file):
+def generate_page(markdown_file, template_file, html_file, basepath):
     with open(markdown_file, "r") as f:
         markdown = f.read()
     with open(template_file, "r") as f:
@@ -89,6 +89,8 @@ def generate_page(markdown_file, template_file, html_file):
 
     html = template.replace("{{ Title }}", title)
     html = html.replace("{{ Content }}", html_node.to_html())
+    html = html.replace('href="/', f'href="{basepath}')
+    html = html.replace('src="/', f'src="{basepath}')
 
     with open(html_file, "w") as f:
         f.write(html)
