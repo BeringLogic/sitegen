@@ -10,7 +10,10 @@ class HTMLNode:
     def to_html(self):
         html = ""
         if self.tag:
-            html += f"<{self.tag}>"
+            html += f"<{self.tag}"
+            if self.props:
+                html += self.props_to_html()
+            html += ">"
         if self.value:
             html += self.value
         else:
