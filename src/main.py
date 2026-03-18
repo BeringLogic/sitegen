@@ -16,10 +16,10 @@ def main():
     print("Creating any required folders")
     init()
 
-    print("Deleting content of public site")
+    print("Deleting content of docs site")
     clean()
 
-    print("Copying content of ./static/ into ./public/")
+    print("Copying content of ./static/ into ./docs/")
     copy_static()
 
     basepath = get_basepath()
@@ -34,11 +34,11 @@ def init():
     os.makedirs("content", exist_ok=True)
 
 def clean():
-    shutil.rmtree("./public")
-    os.mkdir("./public")
+    shutil.rmtree("./docs")
+    os.mkdir("./docs")
 
 def copy_static():
-    recurse_copy("./static/", "./public/")
+    recurse_copy("./static/", "./docs/")
 
 def recurse_copy(source, destination):
     with os.scandir(source) as entries:
@@ -56,7 +56,7 @@ def get_basepath():
     return sys.argv[1]
 
 def generate(basepath):
-    recurse_generate("./content/", "./public/", basepath)
+    recurse_generate("./content/", "./docs/", basepath)
 
 def recurse_generate(source, destination, basepath):
     with os.scandir(source) as entries:
